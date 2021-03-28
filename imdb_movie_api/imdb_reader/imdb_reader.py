@@ -108,13 +108,13 @@ class IMBDReader(object):
         director = self._get_director(people_involved)
         stars = self._get_stars(people_involved)
 
-        genre = self._extract_text_from_cssselector(
+        genres = self._extract_text_from_cssselector(
             data, ".genre"
-        )
+        ).strip().split(", ")
 
         return Movie(
             title,
             re.sub(r"[^0-9]", "", year),
             director,
             stars,
-            genre)
+            genres)

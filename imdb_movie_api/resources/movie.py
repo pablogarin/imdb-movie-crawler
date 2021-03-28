@@ -22,8 +22,10 @@ class Movie(Resource):
             sanitized_query = query.lower().strip()
             movies = dict()
             search_params = sanitized_query.split(" ")
+            all_found = True
             for param in search_params:
                 found, node = self.imdb_dataset.search_params.search(param)
+                all_found = all_found and found
                 if found:
                     for key in node.keys:
                         if key in director_table:
@@ -44,12 +46,23 @@ class Movie(Resource):
                             movies["titles"] = set.union(
                                 movies["titles"],
                                 title_table[key])
+            match_type = "exact"
+            if not all_found:
+                match_type = "partial"
             if len(movies.keys()) > 0:
                 results = set.intersection(*movies.values())
-            return {"query": query, "results": [dict(movie) for movie in results]}
+            return {
+                "query": query,
+                "matched": match_type,
+                "count": len(results),
+                "results": [dict(movie) for movie in results]
+            }
         else:
             data = self.imdb_dataset.movie_list
-            return {"ok": True, "count": len(data), "data": list(map(lambda movie: dict(movie), data))}
-    
+            return {
+                "count": len(data),
+                "results": list(map(lambda movie: dict(movie), data))
+            }
+
     def _search_by_director_and_actor(self, query):
         pass
