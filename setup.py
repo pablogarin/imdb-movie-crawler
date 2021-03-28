@@ -17,7 +17,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "start-app = main:main"
+            "start-app = imdb_movie_api:main"
         ]
     }
 )
