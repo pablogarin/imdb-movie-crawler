@@ -13,7 +13,9 @@ setup(
     install_requires=[
         "Flask>=1.1.2",
         "Flask-RESTful",
-        "requests"
+        "requests",
+        "lxml",
+        "cssselect"
     ],
     entry_points={
         "console_scripts": [

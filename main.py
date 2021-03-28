@@ -1,8 +1,7 @@
-from imdb_movie_api import create_flask_app
+from imdb_movie_api import app
 
 
 def main():
-  app = create_flask_app()
   app.run()
 
 
