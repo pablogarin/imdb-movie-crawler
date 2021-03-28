@@ -17,7 +17,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "start-app = app:main"
+            "start-app = main:main"
         ]
     }
 )

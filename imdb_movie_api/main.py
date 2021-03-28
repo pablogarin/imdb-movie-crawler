@@ -4,12 +4,8 @@ from flask_restful import Api, reqparse
 from .resources.movie import Movie
 
 
-def main():
+def create_flask_app():
   app = Flask(__name__)
   api = Api(app)
   api.add_resource(Movie, "/movie")
-  app.run(debug=True)
-
-
-if __name__ == "__main__":
-  main()
+  return app
