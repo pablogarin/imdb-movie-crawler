@@ -16,4 +16,4 @@ This endpoint responds with a JSON containing the following elements:
 - count: The total number of matches. If no query is given, it should show the total number of movies in the list (in this case, 1000).
 - results: A list with the information of each movie. Each movie has: title, year, director, stars, genre.
 - query: Only returned if a query is given. Same as the search query.
-- matched: Only returned if a query is given. Indicates if the query was an `exact` or `partial` match.
+- matched: Only returned if a query is given. Indicates if the query was an `exact` or `partial` match. This means that all the given words were found in the movie list.
