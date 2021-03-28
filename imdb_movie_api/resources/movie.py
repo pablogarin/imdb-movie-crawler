@@ -15,7 +15,6 @@ class Movie(Resource):
         if query:
             results = []
             title_table = self.imdb_dataset.title_table
-            year_table = self.imdb_dataset.year_table
             genre_table = self.imdb_dataset.genre_table
             director_table = self.imdb_dataset.director_table
             star_table = self.imdb_dataset.star_table
@@ -46,6 +45,12 @@ class Movie(Resource):
                             movies["titles"] = set.union(
                                 movies["titles"],
                                 title_table[key])
+                        if key in genre_table:
+                            if "genres" not in movies:
+                                movies["genres"] = set()
+                            movies["genres"] = set.union(
+                                movies["genres"],
+                                genre_table[key])
             match_type = "exact"
             if not all_found:
                 match_type = "partial"

@@ -11,12 +11,11 @@ class IMBDReader(object):
         "?groups=top_1000&sort=user_rating,desc&count=%s&start=%s"
     movie_list = []
     title_table = {}
-    year_table = {}
     genre_table = {}
     star_table = {}
     director_table = {}
     search_params = Trie()
-    MAX_PAGES = 1
+    MAX_PAGES = 10
 
     def __init__(self):
         print("Fetching movie information...")
@@ -53,6 +52,16 @@ class IMBDReader(object):
                     final_node = self.search_params.add(word)
                     if final_node is not None:
                         final_node.keys.add(star)
+            # genre hash table
+            genres = movie.genres
+            for genre in genres:
+                if genre not in self.genre_table:
+                    self.genre_table[genre] = set()
+                self.genre_table[genre].add(movie)
+                for word in genre.lower().split(' '):
+                    final_node = self.search_params.add(word)
+                    if final_node is not None:
+                        final_node.keys.add(genre)
         print("Movies dataset loaded.")
 
     def _get_movies(self, start=0, count=100):

@@ -6,4 +6,4 @@ app = create_flask_app()
 
 
 def main():
-    app.run()
+    app.run(host='0.0.0.0', port=3000)
