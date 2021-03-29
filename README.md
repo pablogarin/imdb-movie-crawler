@@ -14,6 +14,15 @@ In a UNIX base OS\*, open a terminal and execute the following command:
 
 Once the python package finishes installing, you'll have a new command called `start-app` in your terminal. Whenever you call it it'll start a development server running the app.
 
+#### Virtual Env.
+
+Another option is to run this project from a vitual environment. In that case, you just have to setup the environment and the install the package as follows:
+
+- create env: `python3 -m venv venv`
+- activate env: `source venv/bin/activate`
+- install package: `python setup.py install`
+- run app: `start-app`
+
 \*NOTE: If you have a windows machine, see the section *Running in a container*.
 
 ### Running in a container
