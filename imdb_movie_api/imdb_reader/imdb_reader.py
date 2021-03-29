@@ -4,16 +4,14 @@ import re
 
 from imdb_movie_api.trie import Trie
 from imdb_movie_api.imdb_reader.movie import Movie
+from imdb_movie_api.utils.string import normalize
 
 
 class IMBDReader(object):
     url = "https://www.imdb.com/search/title/"\
         "?groups=top_1000&sort=user_rating,desc&count=%s&start=%s"
     movie_list = []
-    title_table = {}
-    genre_table = {}
-    star_table = {}
-    director_table = {}
+    data_table = {}
     search_params = Trie()
     MAX_PAGES = 10
 
@@ -29,36 +27,40 @@ class IMBDReader(object):
             # title search
             title = movie.title
             for word in title.strip().lower().split(" "):
+                word = normalize(word)
                 final_node = self.search_params.add(word)
                 if final_node is not None:
                     final_node.keys.add(title)
-            self.title_table[title] = {movie}
+            self.data_table[title] = {movie}
             # directors hash table
             director = movie.director
-            if director not in self.director_table:
-                self.director_table[director] = set()
-            self.director_table[director].add(movie)
+            if director not in self.data_table:
+                self.data_table[director] = set()
+            self.data_table[director].add(movie)
             for word in director.lower().split(' '):
+                word = normalize(word)
                 final_node = self.search_params.add(word)
                 if final_node is not None:
                     final_node.keys.add(director)
             # stars hash table
             stars = movie.stars
             for star in stars:
-                if star not in self.star_table:
-                    self.star_table[star] = set()
-                self.star_table[star].add(movie)
+                if star not in self.data_table:
+                    self.data_table[star] = set()
+                self.data_table[star].add(movie)
                 for word in star.lower().split(' '):
+                    word = normalize(word)
                     final_node = self.search_params.add(word)
                     if final_node is not None:
                         final_node.keys.add(star)
             # genre hash table
             genres = movie.genres
             for genre in genres:
-                if genre not in self.genre_table:
-                    self.genre_table[genre] = set()
-                self.genre_table[genre].add(movie)
+                if genre not in self.data_table:
+                    self.data_table[genre] = set()
+                self.data_table[genre].add(movie)
                 for word in genre.lower().split(' '):
+                    word = normalize(word)
                     final_node = self.search_params.add(word)
                     if final_node is not None:
                         final_node.keys.add(genre)
