@@ -34,18 +34,18 @@ class Trie(object):
             return False, None
         return self.search(word[1:], parent.children[char])
 
-    def complete_word(self, word, node):
+    def autocomplete_word(self, word, node):
         possible_matches = []
         stack = deque()
         if node.is_word:
-            possible_matches.append(word)
+            possible_matches.append((word, node))
         for char in node.children:
             stack.append((word, node.children[char]))
         while len(stack) > 0:
             partial_word, curr_node = stack.pop()
             curr_partial_word = partial_word+curr_node.char
             if curr_node.is_word:
-                possible_matches.append(curr_partial_word)
+                possible_matches.append((curr_partial_word, curr_node))
             for c in curr_node.children:
                 stack.append((curr_partial_word, curr_node.children[c]))
         return possible_matches
