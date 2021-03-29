@@ -2,6 +2,8 @@ from flask_restful import reqparse
 from flask_restful import Resource
 from functools import lru_cache
 
+from imdb_movie_api.utils.string import normalize
+
 
 class Movie(Resource):
     def __init__(self, imdb_dataset):
@@ -18,7 +20,7 @@ class Movie(Resource):
         if query:
             if strict is None:
                 strict = False
-            sanitized_query = query.lower().strip()
+            sanitized_query = normalize(query.lower().strip())
             search_params = set(sanitized_query.split(" "))
             results, match_type = self._search_movie(
                 "+".join(search_params),
@@ -40,46 +42,24 @@ class Movie(Resource):
     def _search_movie(self, search_query, strict=False):
         search_params = search_query.split("+")
         results = []
-        title_table = self.imdb_dataset.title_table
-        genre_table = self.imdb_dataset.genre_table
-        director_table = self.imdb_dataset.director_table
-        star_table = self.imdb_dataset.star_table
-        movies = dict()
+        data_table = self.imdb_dataset.data_table
+        matches_found = dict()
         all_found = True
         for param in search_params:
+            movies = set()
             found, node = self.imdb_dataset.search_params.search(param)
             all_found = all_found and found
             if found:
                 for key in node.keys:
-                    if key in director_table:
-                        if "directors" not in movies:
-                            movies["directors"] = set()
-                        movies["directors"] = set.union(
-                            movies["directors"],
-                            director_table[key])
-                    if key in star_table:
-                        if "stars" not in movies:
-                            movies["stars"] = set()
-                        movies["stars"] = set.union(
-                            movies["stars"],
-                            star_table[key])
-                    if key in title_table:
-                        if "titles" not in movies:
-                            movies["titles"] = set()
-                        movies["titles"] = set.union(
-                            movies["titles"],
-                            title_table[key])
-                    if key in genre_table:
-                        if "genres" not in movies:
-                            movies["genres"] = set()
-                        movies["genres"] = set.union(
-                            movies["genres"],
-                            genre_table[key])
+                    data = set()
+                    if key in data_table:
+                        data = data_table[key]
+                    movies = set.union(movies, data)
+            if len(movies) > 0:
+                matches_found[param] = movies
         match_type = "exact"
         if not all_found:
             match_type = "partial"
-        if len(movies.keys()) > 0:
-            results = set.intersection(*movies.values())
-        if strict and not all_found:
-            results = []
+        if len(matches_found.keys()) > 0:
+            results = set.intersection(*matches_found.values())
         return results, match_type
