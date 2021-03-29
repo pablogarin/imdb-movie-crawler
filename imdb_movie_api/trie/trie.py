@@ -35,6 +35,12 @@ class Trie(object):
         return self.search(word[1:], parent.children[char])
 
     def autocomplete_word(self, word, node):
+        """ We use DFS to explore all the words
+        that we can build with the current partial
+        word. For example, of we searched 'ba' and
+        have registered 'bat', 'bass' and 'ball',
+        then we should get all those words.
+        """
         possible_matches = []
         stack = deque()
         if node.is_word:
