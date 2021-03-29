@@ -48,6 +48,11 @@ class Movie(Resource):
         all_found = True
         for param in search_params:
             movies = set()
+            """ We use the trie to search by word in our query.
+            If we find a complete or partial word, we grab the
+            final node and check it's key set. We then use the
+            keyset to fetch all movies from the lookup table.
+            """
             found, node = dataset.search_params.search(param)
             all_found = all_found and found
             if node is not None:
@@ -61,10 +66,17 @@ class Movie(Resource):
                             data = data_table[key]
                         movies = set.union(movies, data)
             if len(movies) > 0:
+                # We store all the movies for any given word in our query
                 matches_found[param] = movies
         match_type = "exact"
         if not all_found:
             match_type = "partial"
         if len(matches_found.keys()) > 0:
+            """ Finaly, we compare all the results and
+            discard those that are not a match with all
+            the words in the query. In other words, we
+            want the intersection of all the groups of
+            movies we found.
+            """
             results = set.intersection(*matches_found.values())
         return results, match_type
