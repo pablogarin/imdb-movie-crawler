@@ -40,21 +40,26 @@ class Movie(Resource):
 
     @lru_cache
     def _search_movie(self, search_query, strict=False):
+        dataset = self.imdb_dataset
         search_params = search_query.split("+")
         results = []
-        data_table = self.imdb_dataset.data_table
+        data_table = dataset.data_table
         matches_found = dict()
         all_found = True
         for param in search_params:
             movies = set()
-            found, node = self.imdb_dataset.search_params.search(param)
+            found, node = dataset.search_params.search(param)
             all_found = all_found and found
-            if found:
-                for key in node.keys:
-                    data = set()
-                    if key in data_table:
-                        data = data_table[key]
-                    movies = set.union(movies, data)
+            if node is not None:
+                possible_results = dataset.search_params.autocomplete_word(
+                    param,
+                    node)
+                for (word, sub_node) in possible_results:
+                    for key in sub_node.keys:
+                        data = set()
+                        if key in data_table:
+                            data = data_table[key]
+                        movies = set.union(movies, data)
             if len(movies) > 0:
                 matches_found[param] = movies
         match_type = "exact"
