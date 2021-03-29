@@ -84,11 +84,11 @@ class IMBDReader(object):
             return None
 
     def _get_director(self, string):
-        regexp = r"Director:([^\|]+)"
+        regexp = r"Directors*:([^\|]+)"
         m = re.search(regexp, string)
         if m:
             director = m.groups()[0]
-            return director.strip()
+            return director.strip().split(", ")
         return ""
 
     def _get_stars(self, string):
